@@ -7,20 +7,26 @@
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-6tP1B2qT+ymPn3E6jV2v7Q8ngXZb3h3PB+zY+uSr7yk="
+    integrity="sha384-kR4xzntbE89UxdslYXuHhEC1gExHqGHArzLVG7qQZfgmnXyywCQJz9kAjtLUHe0H"
     crossorigin=""
   />
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; }
-    #map { width: 100%; height: 100vh; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
   <div id="map"></div>
-
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-o9N1j8Mk1tD5lPdSZFbd8cIfA0ms2wDPRrbC1p1mjW8="
+    integrity="sha384-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vla"
     crossorigin=""
   ></script>
   <script>
@@ -28,7 +34,7 @@
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
-      attribution: '© OpenStreetMap'
+      attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
     var pontos = [
@@ -53,8 +59,8 @@
       ["SBGR - São Paulo Guarulhos", -23.4356, -46.4731]
     ];
 
-    pontos.forEach(function(p) {
-      L.marker([p[1], p[2]]).addTo(map).bindPopup(p[0]);
+    pontos.forEach(function(ponto) {
+      L.marker([ponto[1], ponto[2]]).addTo(map).bindPopup(ponto[0]);
     });
   </script>
 </body>
