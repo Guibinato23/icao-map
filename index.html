@@ -17,53 +17,80 @@
   <div id="map"></div>
   <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
   <script>
-    const airports = [
-      {name: "KOSU - Columbus", coords: [-83.073, 40.0798]},
-      {name: "SBPA - Porto Alegre", coords: [-51.1714, -29.9944]},
-      {name: "LFMN - Nice", coords: [7.2159, 43.6584]},
-      {name: "KOPF - Miami", coords: [-80.2784, 25.907]},
-      {name: "KDAL - Dallas", coords: [-96.8518, 32.8471]},
-      {name: "LTFM - Istanbul", coords: [28.7519, 41.2753]},
-      {name: "LTAZ - Nevsehir", coords: [34.5345, 38.7719]},
-      {name: "SBBE - Belem", coords: [-48.4761, -1.3792]},
-      {name: "KLGB - Long Beach", coords: [-118.1516, 33.8177]},
-      {name: "TJSJ - San Juan", coords: [-66.0018, 18.4394]},
-      {name: "KSUN - Sun Valley", coords: [-114.295, 43.5044]},
-      {name: "KPHL - Philadelphia", coords: [-75.2411, 39.8719]},
-      {name: "KTEB - Teterboro", coords: [-74.0608, 40.8501]},
-      {name: "TFFJ - St. Barts", coords: [-62.8447, 17.9044]},
-      {name: "KPGA - Page", coords: [-111.447, 36.9261]},
-      {name: "SBSP - São Paulo Congonhas", coords: [-46.6566, -23.6261]},
-      {name: "SBRJ - Rio Santos Dumont", coords: [-43.1631, -22.9105]},
-      {name: "SBSV - Salvador", coords: [-38.331, -12.9109]},
-      {name: "SBGR - São Paulo Guarulhos", coords: [-46.4731, -23.4356]}
-    ];
+  const airports = [
+    {icao: "KOSU", name: "KOSU - Columbus", coords: [-83.073, 40.0798]},
+    {icao: "SBPA", name: "SBPA - Porto Alegre", coords: [-51.1714, -29.9944]},
+    {icao: "LFMN", name: "LFMN - Nice", coords: [7.2159, 43.6584]},
+    {icao: "KOPF", name: "KOPF - Miami", coords: [-80.2784, 25.907]},
+    {icao: "KDAL", name: "KDAL - Dallas", coords: [-96.8518, 32.8471]},
+    {icao: "LTFM", name: "LTFM - Istanbul", coords: [28.7519, 41.2753]},
+    {icao: "LTAZ", name: "LTAZ - Nevsehir", coords: [34.5345, 38.7719]},
+    {icao: "SBBE", name: "SBBE - Belem", coords: [-48.4761, -1.3792]},
+    {icao: "KLGB", name: "KLGB - Long Beach", coords: [-118.1516, 33.8177]},
+    {icao: "TJSJ", name: "TJSJ - San Juan", coords: [-66.0018, 18.4394]},
+    {icao: "KSUN", name: "KSUN - Sun Valley", coords: [-114.295, 43.5044]},
+    {icao: "KPHL", name: "KPHL - Philadelphia", coords: [-75.2411, 39.8719]},
+    {icao: "KTEB", name: "KTEB - Teterboro", coords: [-74.0608, 40.8501]},
+    {icao: "TFFJ", name: "TFFJ - St. Barts", coords: [-62.8447, 17.9044]},
+    {icao: "KPGA", name: "KPGA - Page", coords: [-111.447, 36.9261]},
+    {icao: "SBSP", name: "SBSP - São Paulo Congonhas", coords: [-46.6566, -23.6261]},
+    {icao: "SBRJ", name: "SBRJ - Rio Santos Dumont", coords: [-43.1631, -22.9105]},
+    {icao: "SBSV", name: "SBSV - Salvador", coords: [-38.331, -12.9109]},
+    {icao: "SBGR", name: "SBGR - São Paulo Guarulhos", coords: [-46.4731, -23.4356]}
+  ];
 
-    const map = new ol.Map({
-      target: 'map',
-      layers: [ new ol.layer.Tile({ source: new ol.source.OSM() }) ],
-      view: new ol.View({ center: ol.proj.fromLonLat([0, 20]), zoom: 2 })
+  const map = new ol.Map({
+    target: 'map',
+    layers: [ new ol.layer.Tile({ source: new ol.source.OSM() }) ],
+    view: new ol.View({ center: ol.proj.fromLonLat([0, 20]), zoom: 2 })
+  });
+
+  const features = airports.map(a => {
+    return new ol.Feature({
+      geometry: new ol.geom.Point(ol.proj.fromLonLat(a.coords)),
+      name: a.icao
     });
+  });
 
-    const features = airports.map(a => {
-      return new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat(a.coords)),
-        name: a.name
-      });
-    });
-
-    const vectorSource = new ol.source.Vector({ features });
-    const vectorLayer = new ol.layer.Vector({
-      source: vectorSource,
-      style: new ol.style.Style({
-        image: new ol.style.Circle({
-          radius: 6,
-          fill: new ol.style.Fill({ color: 'red' }),
-          stroke: new ol.style.Stroke({ color: 'white', width: 1 })
-        })
+  const vectorSource = new ol.source.Vector({ features });
+  const vectorLayer = new ol.layer.Vector({
+    source: vectorSource,
+    style: new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 6,
+        fill: new ol.style.Fill({ color: 'red' }),
+        stroke: new ol.style.Stroke({ color: 'white', width: 1 })
       })
-    });
-    map.addLayer(vectorLayer);
-  </script>
+    })
+  });
+
+  map.addLayer(vectorLayer);
+
+  // Tooltip element
+  const tooltip = document.createElement('div');
+  tooltip.style.position = 'absolute';
+  tooltip.style.background = 'white';
+  tooltip.style.padding = '4px 8px';
+  tooltip.style.border = '1px solid #ccc';
+  tooltip.style.borderRadius = '4px';
+  tooltip.style.whiteSpace = 'nowrap';
+  tooltip.style.display = 'none';
+  tooltip.style.pointerEvents = 'none';
+  document.body.appendChild(tooltip);
+
+  map.on('pointermove', function(evt) {
+    const feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
+    if (feature) {
+      const coordinates = evt.coordinate;
+      tooltip.style.left = (evt.originalEvent.pageX + 10) + 'px';
+      tooltip.style.top = (evt.originalEvent.pageY + 10) + 'px';
+      tooltip.innerHTML = feature.get('name');
+      tooltip.style.display = 'block';
+    } else {
+      tooltip.style.display = 'none';
+    }
+  });
+</script>
+
 </body>
 </html>
