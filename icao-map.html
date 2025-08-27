@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ICAO Map</title>
+  <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-core.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-map.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/8.7.1/geodata/custom/world/world.js"></script>
+  <style>
+    html, body, #container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <script>
+    anychart.onDocumentReady(function () {
+      var map = anychart.map();
+      map.geoData(anychart.maps.world);
+      map.interactivity().selectionMode("none");
+      map.padding(0);
+
+      var airports = [
+        { name: "KOSU - Columbus", lat: 40.0798, lon: -83.073 },
+        { name: "SBPA - Porto Alegre", lat: -29.9944, lon: -51.1714 },
+        { name: "LFMN - Nice", lat: 43.6584, lon: 7.2159 },
+        { name: "KOPF - Miami", lat: 25.907, lon: -80.2784 },
+        { name: "KDAL - Dallas", lat: 32.8471, lon: -96.8518 },
+        { name: "LTFM - Istanbul", lat: 41.2753, lon: 28.7519 },
+        { name: "LTAZ - Nevsehir", lat: 38.7719, lon: 34.5345 },
+        { name: "SBBE - Belem", lat: -1.3792, lon: -48.4761 },
+        { name: "KLGB - Long Beach", lat: 33.8177, lon: -118.1516 },
+        { name: "TJSJ - San Juan", lat: 18.4394, lon: -66.0018 },
+        { name: "KSUN - Sun Valley", lat: 43.5044, lon: -114.295 },
+        { name: "KPHL - Philadelphia", lat: 39.8719, lon: -75.2411 },
+        { name: "KTEB - Teterboro", lat: 40.8501, lon: -74.0608 },
+        { name: "TFFJ - St. Barts", lat: 17.9044, lon: -62.8447 },
+        { name: "KPGA - Page", lat: 36.9261, lon: -111.447 },
+        { name: "SBSP - São Paulo - Congonhas", lat: -23.6261, lon: -46.6566 },
+        { name: "SBRJ - Rio de Janeiro SDU", lat: -22.9105, lon: -43.1631 },
+        { name: "SBSV - Salvador", lat: -12.9109, lon: -38.331 },
+        { name: "SBGR - São Paulo - Guarulhos", lat: -23.4356, lon: -46.4731 }
+      ];
+
+      var markerData = airports.map(function (a) {
+        return {
+          type: "marker",
+          geometry: { type: "Point", coordinates: [a.lon, a.lat] },
+          properties: { name: a.name }
+        };
+      });
+
+      var markerSeries = map.marker(markerData);
+      markerSeries.tooltip().format("{%name}");
+      markerSeries.size(6);
+      markerSeries.fill("#ff0000").stroke("white");
+
+      map.title("ICAO Locations - Flight Operations");
+      map.container("container");
+      map.draw();
+    });
+  </script>
+</body>
+</html>
