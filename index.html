@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa ICAO - OpenLayers</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+  <style>
+    html, body, #map {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100vh;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: white;
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      white-space: nowrap;
+      display: none;
+      pointer-events: none;
+      font-size: 14px;
+      color: black;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="tooltip" class="tooltip"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+  <script>
+    const airports = [
+      {icao: "KOSU", coords: [-83.073, 40.0798]},
+      {icao: "SBPA", coords: [-51.1714, -29.9944]},
+      {icao: "LFMN", coords: [7.2159, 43.6584]},
+      {icao: "KOPF", coords: [-80.2784, 25.907]},
+      {icao: "KDAL", coords: [-96.8518, 32.8471]},
+      {icao: "LTFM", coords: [28.7519, 41.2753]},
+      {icao: "LTAZ", coords: [34.5345, 38.7719]},
+      {icao: "SBBE", coords: [-48.4761, -1.3792]},
+      {icao: "KLGB", coords: [-118.1516, 33.8177]},
+      {icao: "TJSJ", coords: [-66.0018, 18.4394]},
+      {icao: "KSUN", coords: [-114.295, 43.5044]},
+      {icao: "KPHL", coords: [-75.2411, 39.8719]},
+      {icao: "KTEB", coords: [-74.0608, 40.8501]},
+      {icao: "TFFJ", coords: [-62.8447, 17.9044]},
+      {icao: "KPGA", coords: [-111.447, 36.9261]},
+      {icao: "SBSP", coords: [-46.6566, -23.6261]},
+      {icao: "SBRJ", coords: [-43.1631, -22.9105]},
+      {icao: "SBSV", coords: [-38.331, -12.9109]},
+      {icao: "SBGR", coords: [-46.4731, -23.4356]}
+    ];
+
+    const map = new ol.Map({
+      target: 'map',
+      layers: [ new ol.layer.Tile({ source: new ol.source.OSM() }) ],
+      view: new ol.View({ center: ol.proj.fromLonLat([0, 20]), zoom: 2 })
+    });
+
+    const features = airports.map(a => {
+      const feature = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat(a.coords)),
+        name: a.icao
+      });
+      return feature;
+    });
+
+    const vectorSource = new ol.source.Vector({ features });
+    const vectorLayer = new ol.layer.Vector({
+      source: vectorSource,
+      style: new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 6,
+          fill: new ol.style.Fill({ color: 'red' }),
+          stroke: new ol.style.Stroke({ color: 'white', width: 1 })
+        })
+      })
+    });
+
+    map.addLayer(vectorLayer);
+
+    const tooltip = document.getElementById('tooltip');
+    map.on('pointermove', function(evt) {
+      const feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
+      if (feature) {
+        const coordinate = evt.coordinate;
+        tooltip.innerText = feature.get('name');
+        tooltip.style.left = evt.originalEvent.pageX + 10 + 'px';
+        tooltip.style.top = evt.originalEvent.pageY + 10 + 'px';
+        tooltip.style.display = 'block';
+      } else {
+        tooltip.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
